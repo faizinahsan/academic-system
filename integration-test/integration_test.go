@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	protov1 "github.com/evrone/go-clean-template/docs/proto/v1"
-	"github.com/evrone/go-clean-template/pkg/rabbitmq/rmq_rpc/client"
+	protov1 "github.com/faizinahsan/academic-system/docs/proto/v1"
+	"github.com/faizinahsan/academic-system/pkg/rabbitmq/rmq_rpc/client"
 	"github.com/goccy/go-json"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

@@ -1,4 +1,4 @@
-module github.com/evrone/go-clean-template
+module github.com/faizinahsan/academic-system
 
 go 1.24
 

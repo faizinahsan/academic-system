@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"github.com/ansrivas/fiberprometheus/v2"
-	"github.com/evrone/go-clean-template/config"
-	_ "github.com/evrone/go-clean-template/docs" // Swagger docs.
-	"github.com/evrone/go-clean-template/internal/controller/http/middleware"
-	v1 "github.com/evrone/go-clean-template/internal/controller/http/v1"
-	"github.com/evrone/go-clean-template/internal/usecase"
-	"github.com/evrone/go-clean-template/pkg/logger"
+	"github.com/faizinahsan/academic-system/config"
+	_ "github.com/faizinahsan/academic-system/docs" // Swagger docs.
+	"github.com/faizinahsan/academic-system/internal/controller/http/middleware"
+	v1 "github.com/faizinahsan/academic-system/internal/controller/http/v1"
+	"github.com/faizinahsan/academic-system/internal/usecase"
+	"github.com/faizinahsan/academic-system/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 )

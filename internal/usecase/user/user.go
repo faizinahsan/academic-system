@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"github.com/faizinahsan/academic-system/internal/entity"
 	"github.com/faizinahsan/academic-system/internal/repo"
 )
@@ -24,8 +25,7 @@ func (u UseCase) Registration(ctx context.Context, users entity.User) (entity.Us
 }
 
 func (u UseCase) Login(ctx context.Context, users entity.User) (entity.User, error) {
-	//TODO implement me
-	panic("implement me")
+	return entity.User{}, errors.New("not implemented")
 }
 
 func (u UseCase) Profile(ctx context.Context, userID string) (entity.User, error) {

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/faizinahsan/academic-system/internal/controller/http/v1/response"
 	"github.com/faizinahsan/academic-system/internal/entity"
 	"github.com/gofiber/fiber/v2"
 	"time"
@@ -57,7 +58,8 @@ func (r *User) Login(c *fiber.Ctx) error {
 	}
 	_, err := r.user.Login(c.Context(), userEntity)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		r.log.Error("Login error: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(response.Error{Error: "Internal server error"})
 
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Login successful"})

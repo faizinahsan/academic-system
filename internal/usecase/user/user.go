@@ -24,8 +24,12 @@ func (u UseCase) Registration(ctx context.Context, users entity.User) (entity.Us
 	panic("implement me")
 }
 
-func (u UseCase) Login(ctx context.Context, users entity.User) (entity.User, error) {
-	return entity.User{}, errors.New("not implemented")
+func (u UseCase) Login(ctx context.Context, users entity.User) (*entity.User, error) {
+	userData, err := u.repo.GetUserByID(ctx, users.Username)
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+	return &userData, errors.New("not implemented")
 }
 
 func (u UseCase) Profile(ctx context.Context, userID string) (entity.User, error) {

@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"github.com/bwmarrin/snowflake"
 	"os"
 	"strings"
 
@@ -15,6 +16,7 @@ type Interface interface {
 	Warn(message string, args ...interface{})
 	Error(message interface{}, args ...interface{})
 	Fatal(message interface{}, args ...interface{})
+	RequestId() string
 }
 
 // Logger -.
@@ -99,4 +101,10 @@ func (l *Logger) msg(level string, message interface{}, args ...interface{}) {
 	default:
 		l.log(fmt.Sprintf("%s message %v has unknown type %v", level, message, msg), args...)
 	}
+}
+
+func (l *Logger) RequestId() string {
+	node, _ := snowflake.NewNode(1)
+	ID := node.Generate()
+	return ID.String()
 }

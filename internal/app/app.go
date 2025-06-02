@@ -3,6 +3,9 @@ package app
 
 import (
 	"fmt"
+	userRepo "github.com/faizinahsan/academic-system/internal/repo/user"
+	"github.com/faizinahsan/academic-system/internal/usecase/translation"
+
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,7 +16,7 @@ import (
 	"github.com/faizinahsan/academic-system/internal/controller/http"
 	"github.com/faizinahsan/academic-system/internal/repo/persistent"
 	"github.com/faizinahsan/academic-system/internal/repo/webapi"
-	"github.com/faizinahsan/academic-system/internal/usecase/translation"
+	"github.com/faizinahsan/academic-system/internal/usecase/user"
 	"github.com/faizinahsan/academic-system/pkg/grpcserver"
 	"github.com/faizinahsan/academic-system/pkg/httpserver"
 	"github.com/faizinahsan/academic-system/pkg/logger"
@@ -38,6 +41,9 @@ func Run(cfg *config.Config) {
 		webapi.New(),
 	)
 
+	userUseCase := user.New(
+		userRepo.New(pg))
+
 	// RabbitMQ RPC Server
 	rmqRouter := amqprpc.NewRouter(translationUseCase, l)
 
@@ -52,7 +58,7 @@ func Run(cfg *config.Config) {
 
 	// HTTP Server
 	httpServer := httpserver.New(httpserver.Port(cfg.HTTP.Port), httpserver.Prefork(cfg.HTTP.UsePreforkMode))
-	http.NewRouter(httpServer.App, cfg, translationUseCase, l)
+	http.NewRouter(httpServer.App, cfg, translationUseCase, l, userUseCase)
 
 	// Start servers
 	rmqServer.Start()

@@ -15,4 +15,11 @@ type (
 		Translate(context.Context, entity.Translation) (entity.Translation, error)
 		History(context.Context) (entity.TranslationHistory, error)
 	}
+
+	User interface {
+		Registration(ctx context.Context, users entity.User) (entity.User, error)
+		Login(ctx context.Context, users entity.User) (entity.User, error)
+		Profile(ctx context.Context, userID string) (entity.User, error)
+		Logout(ctx context.Context, token string) error
+	}
 )

@@ -20,4 +20,9 @@ type (
 	TranslationWebAPI interface {
 		Translate(entity.Translation) (entity.Translation, error)
 	}
+
+	UserRepo interface {
+		CreateUser(ctx context.Context, user entity.User) error
+		GetUserByID(ctx context.Context, userID string) (entity.User, error)
+	}
 )

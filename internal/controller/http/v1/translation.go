@@ -18,6 +18,10 @@ import (
 // @Failure     500 {object} response.Error
 // @Router      /translation/history [get]
 func (r *V1) history(ctx *fiber.Ctx) error {
+	//requestId := r.l.RequestId()
+	//ctx.Set(constant.RequestId, requestId)
+	//reqParam, _ := json.Marshal(ctx.AllParams())
+	//r.l.Info("[%v] request called %v", r.l.RequestId(), string(reqParam))
 	translationHistory, err := r.t.History(ctx.UserContext())
 	if err != nil {
 		r.l.Error(err, "http - v1 - history")
@@ -40,6 +44,11 @@ func (r *V1) history(ctx *fiber.Ctx) error {
 // @Failure     500 {object} response.Error
 // @Router      /translation/do-translate [post]
 func (r *V1) doTranslate(ctx *fiber.Ctx) error {
+	//requestId := r.l.RequestId()
+	//ctx.Set(constant.RequestId, requestId)
+	////reqParam, _ := json.Marshal(ctx.Body())
+	r.l.Info("[%v] request %v called %v", ctx.GetRespHeader(fiber.HeaderXRequestID), "doTranslate", string(ctx.BodyRaw()))
+
 	var body request.Translate
 
 	if err := ctx.BodyParser(&body); err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/faizinahsan/academic-system/config"
 	_ "github.com/faizinahsan/academic-system/docs" // Swagger docs.
 	"github.com/faizinahsan/academic-system/internal/controller/http/middleware"
+	userRoute "github.com/faizinahsan/academic-system/internal/controller/http/user"
 	v1 "github.com/faizinahsan/academic-system/internal/controller/http/v1"
 	"github.com/faizinahsan/academic-system/internal/usecase"
 	"github.com/faizinahsan/academic-system/pkg/logger"
@@ -22,11 +23,22 @@ import (
 // @version     1.0
 // @host        localhost:8080
 // @BasePath    /v1
-func NewRouter(app *fiber.App, cfg *config.Config, t usecase.Translation, l logger.Interface) {
+func NewRouter(
+	app *fiber.App,
+	cfg *config.Config,
+	t usecase.Translation,
+	l logger.Interface,
+	user usecase.User) {
 	// Options
 	app.Use(middleware.Logger(l))
 	app.Use(middleware.Recovery(l))
-
+	//app.Use(requestid.New())
+	//app.Use(requestid.New(requestid.Config{
+	//	Header: "X-Custom-Header",
+	//	Generator: func() string {
+	//		return utils.UUID()
+	//	},
+	//}))
 	// Prometheus metrics
 	if cfg.Metrics.Enabled {
 		prometheus := fiberprometheus.New("my-service-name")
@@ -46,5 +58,9 @@ func NewRouter(app *fiber.App, cfg *config.Config, t usecase.Translation, l logg
 	apiV1Group := app.Group("/v1")
 	{
 		v1.NewTranslationRoutes(apiV1Group, t, l)
+	}
+	apiUserGroup := app.Group("/v1")
+	{
+		userRoute.NewUserRoutes(apiUserGroup, user, l)
 	}
 }

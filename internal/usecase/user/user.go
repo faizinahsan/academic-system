@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/faizinahsan/academic-system/internal/entity"
 	"github.com/faizinahsan/academic-system/internal/repo"
+	custom_error "github.com/faizinahsan/academic-system/pkg/custom-error"
+	"github.com/gofiber/fiber/v2"
 )
 
 // UseCase -.
@@ -41,17 +43,20 @@ func (u UseCase) Login(ctx context.Context, users entity.User) (*entity.LoginRes
 
 	userData, err := u.repo.GetUserByID(ctx, users.Username)
 	if err != nil {
-		return nil, errors.New("user not found")
+		return nil, err
+	}
+	if userData == nil {
+		return nil, fiber.ErrUnauthorized
 	}
 	if userData.PasswordHash != users.PasswordHash {
-		return nil, errors.New("invalid password")
+		return nil, fiber.ErrUnauthorized
 	}
 	if !userData.IsActive {
-		return nil, errors.New("user is not active")
+		return nil, custom_error.StatusNotActive
 	}
 	token, err := createToken(users.Username)
 	if err != nil {
-		return nil, errors.New("invalid authentication")
+		return nil, fiber.ErrInternalServerError
 	}
 	data := entity.LoginResponse{
 		Token: token,

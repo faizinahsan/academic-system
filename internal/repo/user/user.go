@@ -50,28 +50,26 @@ func (r *UserRepo) CreateUser(ctx context.Context, user *entity.User) error {
 	return nil
 }
 
-func (r *UserRepo) GetUserByID(ctx context.Context, userID string) (entity.User, error) {
+func (r *UserRepo) GetUserByID(ctx context.Context, userID string) (*entity.User, error) {
 	sql, args, err := r.Builder.
-		Select("users").
-		Columns("username, password_hash, created_at, updated_at, is_active").
+		Select("username, password_hash, created_at, updated_at, is_active").
+		From("users").
 		Where("username = ?", userID).
 		ToSql()
 	if err != nil {
-		return entity.User{}, fmt.Errorf("UserRepo - GetUserByID - r.Builder: %w", err)
+		return nil, fmt.Errorf("UserRepo - GetUserByID - r.Builder: %w", err)
 	}
 	rows, err := r.Pool.Query(ctx, sql, args...)
 	if err != nil {
-		return entity.User{}, fmt.Errorf("UserRepo - GetUserByID - r.Pool.Query: %w", err)
+		return nil, fmt.Errorf("UserRepo - GetUserByID - r.Pool.Query: %w", err)
 	}
 	defer rows.Close()
 	var user entity.User
 	if rows.Next() {
 		err = rows.Scan(&user.Username, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.IsActive)
 		if err != nil {
-			return entity.User{}, fmt.Errorf("UserRepo - GetUserByID - rows.Scan: %w", err)
+			return nil, fmt.Errorf("UserRepo - GetUserByID - rows.Scan: %w", err)
 		}
-	} else {
-		return entity.User{}, fmt.Errorf("UserRepo - GetUserByID - user not found")
 	}
-	return user, nil
+	return &user, nil
 }

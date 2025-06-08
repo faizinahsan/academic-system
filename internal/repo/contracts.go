@@ -23,7 +23,7 @@ type (
 
 	UserRepo interface {
 		CreateUser(ctx context.Context, user *entity.User) error
-		GetUserByID(ctx context.Context, userID string) (entity.User, error)
+		GetUserByID(ctx context.Context, userID string) (*entity.User, error)
 	}
 	StudentsRepo interface {
 		GetStudentsList(ctx context.Context) ([]*entity.Students, error)

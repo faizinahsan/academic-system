@@ -9,7 +9,7 @@ import (
 // Login handles user login
 func (r *User) Login(c *fiber.Ctx) error {
 	type LoginRequest struct {
-		Email    string `json:"email" validate:"required,email"`
+		Username string `json:"username" validate:"required"`
 		Password string `json:"password" validate:"required"`
 	}
 	var req LoginRequest
@@ -21,14 +21,14 @@ func (r *User) Login(c *fiber.Ctx) error {
 	}
 	// TODO: Fetch user from DB and verify password
 	userEntity := entity.User{
+		Username:     req.Username,
 		PasswordHash: req.Password, // TODO: Replace with hashed password
 	}
-	_, err := r.user.Login(c.Context(), userEntity)
+	loginRes, err := r.user.Login(c.Context(), userEntity)
 	if err != nil {
-		r.log.Error("Login error: %v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(response.Error{Error: "Internal server error"})
+		return errorResponse(c, err)
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Login successful"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Login successful", "token": loginRes.Token})
 }
 
 // Register handles user registration

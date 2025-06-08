@@ -8,6 +8,7 @@ import (
 	"github.com/faizinahsan/academic-system/config"
 	_ "github.com/faizinahsan/academic-system/docs" // Swagger docs.
 	"github.com/faizinahsan/academic-system/internal/controller/http/middleware"
+	studentsRoute "github.com/faizinahsan/academic-system/internal/controller/http/students"
 	userRoute "github.com/faizinahsan/academic-system/internal/controller/http/user"
 	v1 "github.com/faizinahsan/academic-system/internal/controller/http/v1"
 	"github.com/faizinahsan/academic-system/internal/usecase"
@@ -28,17 +29,11 @@ func NewRouter(
 	cfg *config.Config,
 	t usecase.Translation,
 	l logger.Interface,
-	user usecase.User) {
+	user usecase.User,
+	students usecase.Students) {
 	// Options
 	app.Use(middleware.Logger(l))
 	app.Use(middleware.Recovery(l))
-	//app.Use(requestid.New())
-	//app.Use(requestid.New(requestid.Config{
-	//	Header: "X-Custom-Header",
-	//	Generator: func() string {
-	//		return utils.UUID()
-	//	},
-	//}))
 	// Prometheus metrics
 	if cfg.Metrics.Enabled {
 		prometheus := fiberprometheus.New("my-service-name")
@@ -62,5 +57,9 @@ func NewRouter(
 	apiUserGroup := app.Group("/v1")
 	{
 		userRoute.NewUserRoutes(apiUserGroup, user, l)
+	}
+	apiStudentsGroup := app.Group("/v1")
+	{
+		studentsRoute.NewStudentsRouter(apiStudentsGroup, students, l)
 	}
 }

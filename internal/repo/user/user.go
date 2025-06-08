@@ -20,25 +20,58 @@ func New(pg *postgres.Postgres) *UserRepo {
 }
 
 // CreateUser -.
-func (r *UserRepo) CreateUser(ctx context.Context, t entity.User) error {
-	sql, args, err := r.Builder.
+func (r *UserRepo) CreateUser(ctx context.Context, user *entity.User) error {
+	tx, err := r.Pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("UserRepo - CreateUserWithStudent - Begin: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(ctx)
+		}
+	}()
+	// Insert into users
+	userSQL, userArgs, err := r.Builder.
 		Insert("users").
-		Columns("username, email, phone, password_hash, created_at, updated_at, is_active").
-		Values(t.Username, t.Email, t.Phone, t.PasswordHash, t.CreatedAt, t.UpdatedAt, t.IsActive).
+		Columns("username", "password_hash", "created_at", "updated_at", "is_active").
+		Values(user.Username, user.PasswordHash, user.CreatedAt, user.UpdatedAt, user.IsActive).
 		ToSql()
 	if err != nil {
-		return fmt.Errorf("UserRepo - CreateUser - r.Builder: %w", err)
+		return fmt.Errorf("UserRepo - CreateUserWithStudent - user ToSql: %w", err)
 	}
-
-	_, err = r.Pool.Exec(ctx, sql, args...)
+	_, err = tx.Exec(ctx, userSQL, userArgs...)
 	if err != nil {
-		return fmt.Errorf("UserRepo - CreateUser - r.Pool.Exec: %w", err)
+		return fmt.Errorf("UserRepo - CreateUserWithStudent - user Exec: %w", err)
 	}
 
+	if err = tx.Commit(ctx); err != nil {
+		return fmt.Errorf("UserRepo - CreateUserWithStudent - Commit: %w", err)
+	}
 	return nil
 }
 
 func (r *UserRepo) GetUserByID(ctx context.Context, userID string) (entity.User, error) {
-	//TODO implement me
-	panic("implement me")
+	sql, args, err := r.Builder.
+		Select("users").
+		Columns("username, password_hash, created_at, updated_at, is_active").
+		Where("username = ?", userID).
+		ToSql()
+	if err != nil {
+		return entity.User{}, fmt.Errorf("UserRepo - GetUserByID - r.Builder: %w", err)
+	}
+	rows, err := r.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return entity.User{}, fmt.Errorf("UserRepo - GetUserByID - r.Pool.Query: %w", err)
+	}
+	defer rows.Close()
+	var user entity.User
+	if rows.Next() {
+		err = rows.Scan(&user.Username, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.IsActive)
+		if err != nil {
+			return entity.User{}, fmt.Errorf("UserRepo - GetUserByID - rows.Scan: %w", err)
+		}
+	} else {
+		return entity.User{}, fmt.Errorf("UserRepo - GetUserByID - user not found")
+	}
+	return user, nil
 }

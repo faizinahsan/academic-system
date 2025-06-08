@@ -1,10 +1,9 @@
 package main
 
 import (
-	"log"
-
 	"github.com/faizinahsan/academic-system/config"
 	"github.com/faizinahsan/academic-system/internal/app"
+	"log"
 )
 
 func main() {

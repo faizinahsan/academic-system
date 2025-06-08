@@ -17,9 +17,15 @@ type (
 	}
 
 	User interface {
-		Registration(ctx context.Context, users entity.User) (entity.User, error)
-		Login(ctx context.Context, users entity.User) (*entity.User, error)
-		Profile(ctx context.Context, userID string) (entity.User, error)
+		//Registration(ctx context.Context, users entity.User) (entity.User, error)
+		Login(ctx context.Context, users entity.User) (*entity.LoginResponse, error)
+		//Profile(ctx context.Context, userID string) (entity.User, error)
 		Logout(ctx context.Context, token string) error
+		RegistrationFaker(ctx context.Context) error
+		UpdatePassword(ctx context.Context, user *entity.User) error
+	}
+
+	Students interface {
+		StudentsRegistration(ctx context.Context, students *entity.Students, user *entity.User) (*entity.Students, error)
 	}
 )

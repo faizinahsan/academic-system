@@ -103,9 +103,22 @@ migrate-up: ### migration up
 	migrate -path migrations -database '$(PG_URL)?sslmode=disable' up
 .PHONY: migrate-up
 
+migrate-force: ### migration up
+	migrate force '$(word 2,$(MAKECMDGOALS))'
+.PHONY: migrate-force
+
 bin-deps: ### install tools
 	GOBIN=$(LOCAL_BIN) go install tool
 .PHONY: bin-deps
+
+create-migrations: ## Create migrations
+	@echo "Usage: make migrate-create name=<migration_name>"
+	migrate create -ext sql -dir ./migrations ${name}
+	@echo "Example: make migrate-create name=add_users_table"
+
+migrate-down: ### migration down
+	migrate -path migrations -database '$(PG_URL)?sslmode=disable' down
+.PHONY: migrate-down
 
 pre-commit: swag-v1 proto-v1 mock format linter-golangci test ### run pre-commit
 .PHONY: pre-commit

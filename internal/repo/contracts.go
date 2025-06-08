@@ -22,7 +22,17 @@ type (
 	}
 
 	UserRepo interface {
-		CreateUser(ctx context.Context, user entity.User) error
+		CreateUser(ctx context.Context, user *entity.User) error
 		GetUserByID(ctx context.Context, userID string) (entity.User, error)
+	}
+	StudentsRepo interface {
+		GetStudentsList(ctx context.Context) ([]*entity.Students, error)
+		CreateUserForStudents(ctx context.Context, user *entity.User, student *entity.Students) error
+	}
+	ProfessorsRepo interface {
+		GetProfessorsList(ctx context.Context) ([]*entity.Professors, error)
+	}
+	SBARepo interface {
+		GetSBAList(ctx context.Context) ([]*entity.SBA, error)
 	}
 )

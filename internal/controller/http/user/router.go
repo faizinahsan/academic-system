@@ -20,7 +20,7 @@ func NewUserRoutes(apiV1Group fiber.Router,
 	userGroup := apiV1Group.Group("/user")
 
 	{
-		userGroup.Post("/register", r.Register)
 		userGroup.Post("/login", r.Login)
+		userGroup.Post("/register-faker", r.RegisterFaker)
 	}
 }

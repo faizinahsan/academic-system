@@ -35,7 +35,7 @@ require (
 	github.com/swaggo/swag v1.16.4
 	go.uber.org/mock v0.5.2
 	google.golang.org/grpc v1.72.2
-	google.golang.org/protobuf v1.36.6
+	google.golang.org/protobuf v1.36.8
 )
 
 require (
